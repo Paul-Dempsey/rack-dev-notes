@@ -11,6 +11,7 @@ It combines stuff I've posted on the [VCV Community](https://community.vcvrack.c
 | Debugging | (**#d** TODO) |
 | [Panels](./panels.md#panels) | My Panel process, plus tips for using Inkscape. |
 | Hot-swap SVG | (**#d** TODO) |
+| [Jitter periodic updates](./jitter-periodic.md#jitter-periodic-updates) | Mitigate CPU spikes by adding jitter to periodic (control-rate) code. |
 | Documentation on GitHub | (**#d** TODO) Minimal viable docs on GitHub |
 | [Doc images](./doc-images.md#plugin-images-for-documentation) | Preparing module images for documentation. |
 | Releasing to the Rack Library | (**#d** TODO) Checklist for releasing to the VCV library |
