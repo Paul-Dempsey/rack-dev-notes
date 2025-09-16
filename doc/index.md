@@ -1,4 +1,6 @@
-# pachde dev notes for VCV Rack
+# Dev notes for VCV Rack
+
+![pachde (#d) logo](./assets/Logo-24.svg) by pachde (#d)
 
 This project collects pachde (**#d**) notes about developing plugins for VCV Rack.
 It combines stuff I've posted on the [VCV Community](https://community.vcvrack.com/), the [VCV Rack Discord](https://discord.gg/wxa89Mh), and new information not posted elsewhere.

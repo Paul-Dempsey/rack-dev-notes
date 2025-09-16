@@ -14,7 +14,8 @@ The usual way to throttle updates is with something like this:
 ```cpp
 constexpr const int64_t PARAM_INTERVAL = 64;
 
-void MyModule::process(const ProcessArgs &args)
+void MyModule::process(const ProcessArgs &args) {
+    ...
     if (0 == (args.frame % PARAM_INTERVAL)) {
         // update parameters ...
     }
@@ -29,8 +30,8 @@ Powers of two are programmer's favorite for arbitrary numbers (for no particular
 This results in a CPU spike every `PARAM_INTERVAL` frames.
 This is bad. CPU spikes _can_ cause audio artifacts.
 
-What we want to do is to spread these periodic parameter updates across different frames for different modules.
-Plus, we of course want to do that precisely and efficiently.
+What we want is to spread these periodic parameter updates across different frames for different modules.
+Plus, we want to do that precisely and efficiently.
 
 Rack has `::rack::random::uniform()` we can call to get a nicely distributed random number for that purpose that we can save as a member in our module. But there's a better option.
 

@@ -2,7 +2,7 @@
 
 **#d** (pachde) Developer notes for VCV Rack plugins.
 
-Start with the [Table of Contents](./doc/index.md).
+Start with the [Table of Contents](./doc/index.md#dev-notes-for-vcv-rack).
 
 All content and images in this repo are Copyright © Paul Chase Dempsey.
 All rights reserved.
