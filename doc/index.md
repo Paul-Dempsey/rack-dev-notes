@@ -12,7 +12,7 @@ It combines stuff I've posted on the [VCV Community](https://community.vcvrack.c
 | [Build Rack](./build-rack.md#build-rack) | A.K.A. No SDK. |
 | Debugging | (**#d** TODO) |
 | [Panels](./panels.md#panels) | My Panel process, plus tips for using Inkscape. |
-| Hot-swap SVG | (**#d** TODO) |
+| [Hot-reload SVGs](./hot-svg.md#hot-reload-svgs) | For fast iteration on panel SVGs, implement hot-reloading. |
 | [Jitter periodic updates](./jitter-periodic.md#jitter-periodic-updates) | Mitigate CPU spikes by adding jitter to periodic (control-rate) code. |
 | Documentation on GitHub | (**#d** TODO) Minimal viable docs on GitHub |
 | [Doc images](./doc-images.md#plugin-images-for-documentation) | Preparing module images for documentation. |
