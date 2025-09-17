@@ -24,6 +24,10 @@ This note is written for a newcomer, so I don't assume you know about writing ma
 > I assume you're starting from a generic VCV Rack plugin build, and you're building from the command line.
 > I based this exercise on a project created using the GenericBlank template (see [Use GenericBlank](./use-generic-blank.md#use-genericblank)). So this uses the structure and naming of GenericBlank.
 
+> **License**  —
+> All source code in this article is covered by the MIT license.
+> You may use this code freely.
+
 ## Hot-reload feature
 
 Let's run down the tl;dr on the hot-reload feature:
