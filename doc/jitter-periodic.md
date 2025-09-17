@@ -50,3 +50,7 @@ void MyModule::process(const ProcessArgs &args) {
     }
 
 ```
+
+| | |
+|--|--|
+| ![pachde (#d) logo](./assets/Logo.svg) | Copyright © Paul Chase Dempsey |

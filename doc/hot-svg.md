@@ -328,3 +328,8 @@ Now try it with multiple instances of your module, or other modules from your pl
 All instances should update when you press F5 on any one of them.
 
 Because all modules are afffected from any one of them, you don't actually have to implement the hot-swap UI code into all modules (even though that is most convenient).
+
+
+| | |
+|--|--|
+| ![pachde (#d) logo](./assets/Logo.svg) | Copyright © Paul Chase Dempsey |
