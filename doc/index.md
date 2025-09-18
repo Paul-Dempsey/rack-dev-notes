@@ -10,7 +10,7 @@ It combines stuff I've posted on the [VCV Community](https://community.vcvrack.c
 | [Use GenericBlank](./use-generic-blank.md#use-genericblank) | Use the **#d** Generic Blank template repo to start a new plugin. |
 | [Project structure](./project-structure.md#project-structure) | File layout of Rack plugin |
 | [Build Rack](./build-rack.md#build-rack) | A.K.A. No SDK. |
-| Debugging | (**#d** TODO) |
+| [Debugging](./debug.md#debugging) | Setting up Rack debugging in VSCode on Windows. |
 | [Panels](./panels.md#panels) | My Panel process, plus tips for using Inkscape. |
 | [Hot-reload SVGs](./hot-svg.md#hot-reload-svgs) | For fast iteration on panel SVGs, implement hot-reloading. |
 | [Jitter periodic updates](./jitter-periodic.md#jitter-periodic-updates) | Mitigate CPU spikes by adding jitter to periodic (control-rate) code. |

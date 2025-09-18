@@ -66,7 +66,7 @@ I have two debugging configurations in the file:
 - `"name": "(gdb) Launch"` for regular debugging with my dev build of Rack.
 - `"name": "(gdb) Launch retail"`for debugging my installed retail Rack.
 
-```json
+```jsonc
 {
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
