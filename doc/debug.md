@@ -159,7 +159,7 @@ I have two debugging configurations in the file:
 }
 ```
 
-- This is using MINGW64's GDB.
+- This is using MINGW64's GDB debugger.
 
 - `-d` on the command line to see the Rack log in the VSCode _Terminal_ window.
 This requires a custom build of Rack that sets `STANDALONE_LDFLAGS += -mconsole` linker flag instead of `-mwindows`.
