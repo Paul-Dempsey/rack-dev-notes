@@ -5,6 +5,9 @@
 This project collects pachde (**#d**) notes about developing plugins for VCV Rack.
 It combines stuff I've posted on the [VCV Community](https://community.vcvrack.com/), the [VCV Rack Discord](https://discord.gg/wxa89Mh), and new information not posted elsewhere.
 
+> **License** — All English content and images in this repo are Copyright © Paul Chase Dempsey, All rights reserved.
+> All programming-language source code and configuration in this repo is MIT-licensed.
+
 | Note | Description |
 | -- | -- |
 | [Use GenericBlank](./use-generic-blank.md#use-genericblank) | Use the **#d** Generic Blank template repo to start a new plugin. |
