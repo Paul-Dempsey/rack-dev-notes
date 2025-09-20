@@ -15,10 +15,14 @@ This means being able to reload the graphics from disk without restarting the pr
 Now, games often have a highly engineered system with a file-system watcher to automatically detect changes and reload assets as soon as the file changes.
 That would be cool, but that's a lot of complexity to engineer, especially in a cross-platform way, and too much to cover in a simple dev note.
 
-So, we'll implement a pragmatic minimal solution where we invoke the reloading manually.
+So, we'll implement a pragmatic minimalist solution where we invoke the reloading manually.
 
 What follows is a step-by step guide, including all the code required to have SVG hot-reloading in your plugin.
-This note is written for a newcomer, so I don't assume you know about writing makefiles and the like. Bear with me if the explanations cover things that "every developer should know already" :-).
+This note is written for a newcomer, so I don't assume you know about writing makefiles and the like.
+Bear with me if the explanations covers things that "every developer should know already" :-).
+
+**See also** Idlework's [Death to helper.py, Long live SvgHelper](https://community.vcvrack.com/t/death-to-helper-py-long-live-svghelper/19427) on the Rack Community forum for another approach and code you can use.
+This one is more extensive and comes with more bells and whistles than that what I describe here.
 
 > **Note** —
 > I assume you're starting from a generic VCV Rack plugin build, and you're building from the command line.
@@ -100,7 +104,7 @@ make
 ```
 
 In other words, do the regular normal thing. That's what the Rack Library builds will do.
-Becuase we haven't updated the GitHub action, the GitHub builds are not dev builds.
+Because we haven't updated the GitHub action, the GitHub builds are not dev builds.
 
 So what did we get from this change, given there's nothing about the main topic of this dev note here yet? We got:
 
@@ -326,13 +330,40 @@ And we're done! You should be able to do a dev build and run it and try out the 
 Once you're up and running, give it a try.
 While running Rack with your module visible, modify the panel SVG in an easily visible way, such as changing the panel color, or adding a rectangle that won't be covered by a control.
 After saving the changed SVG, click on your module and press F5.
-You should immediately see the affect of your change on the module.
+You should immediately see your change to the module.
 
 Now try it with multiple instances of your module, or other modules from your plugin in the patch.
 All instances should update when you press F5 on any one of them.
 
 Because all modules are afffected from any one of them, you don't actually have to implement the hot-swap UI code into all modules (even though that is most convenient).
 
+## PS: even simpler hot-swap
+
+If all you want is to reload _this_ module's panel,  we can go even more minimal. Ignore everything in this article, and add this function to your module widget (substituting your panel names):
+
+```cpp
+void MyModuleWidget::reloadPanel() {
+    auto panel = dynamic_cast<::rack::app::ThemedSvgPanel*>(getPanel());
+    if (panel) {
+        panel->lightSvg->loadFile(asset::plugin(pluginInstance, "res/l-light.svg"));
+        panel->darkSvg->loadFile(asset::plugin(pluginInstance, "res/l-dark.svg"));
+        onDirty(::rack::widget::Widget::DirtyEvent{});
+    }
+}
+```
+
+Call it from a hotkey handler and/or menu item. Easy peasy.
+
+There are some nits with this approach:
+
+- We code the svg path twice: once in the constructor, and once in the explicit reload. If we move the panel graphics or rename them, we have more places in the code to change.
+
+  There are a couple of ways to fix this of course, such as moving the string literals for the names to constants, or adding methods that return the light and dark panel paths (which could be pure virtual methods on a comman base class for your plugin's module widgets).
+
+- Only the module under the cursor updates. Other instances of the module in the patch do not refresh.
+
+  But maybe that's not a disadvantage: now you can see before/after side-by-side, for a limited time.
+The next time a panel's framebuffer gets dirtied, it will show the new graphic.
 
 | | |
 |--|--|

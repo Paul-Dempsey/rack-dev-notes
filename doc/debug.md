@@ -21,7 +21,7 @@ This is a standard industry setup for a developer. These days there are low-cost
 
   VSCode is on the right monitor.
 
-  At one time I built and ran from within VSCode using VSCode tasks, but stopped doing that becuase it was too much trouble to set up and maintain for multiple plugins.
+  At one time I built and ran from within VSCode using VSCode tasks, but stopped doing that because it was too much trouble to set up and maintain for multiple plugins.
   I found working only within the VSCode app was too constraining.
 
   If on a laptop/single monitor configuration, building in VSCode could have advantages, and setting up the tasks is not difficult once you get the idea of how VSCode task configuration works.
