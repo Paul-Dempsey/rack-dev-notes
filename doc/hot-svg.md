@@ -226,6 +226,7 @@ In `src/plugin.cpp`, we'll create that cache instance and add a function that do
 
 ```cpp
 #if defined USE_HOT_SVG
+// global svg cache
 hot_svg::Cache svg_cache;
 
 void hotReloadSvgs()
@@ -246,7 +247,7 @@ void hotReloadSvgs()
 ## Add hot-reload access to the module user interface
 
 Our design calls for a key press and a menu item to invoke SVG reloading.
-So, we go to our nmodule widget and add or modify `onHoverKey` for the key press, and add/modify `appendContextMenu`.
+So, we go to our module widget and add or modify `onHoverKey` for the key press, and add/modify `appendContextMenu`.
 
 Here's the code, assuming you don't already have overrides for these fuunctions.
 If you're following from a stock GenericBlank, you won't have these yet.
