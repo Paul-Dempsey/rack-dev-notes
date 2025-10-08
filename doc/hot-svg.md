@@ -104,7 +104,7 @@ make
 ```
 
 In other words, do the regular normal thing. That's what the Rack Library builds will do.
-Because we haven't updated the GitHub action, the GitHub builds are not dev builds.
+And because we haven't updated the GitHub action to pass `DEV_BUILD=1`, the GitHub builds are also not dev builds.
 
 So what did we get from this change, given there's nothing about the main topic of this dev note here yet? We got:
 
@@ -123,7 +123,7 @@ The support code consists of a header and cpp file for an SVG cache.
 We will bypass the normal Rack SVG cache which doesn't support reload, and instead use a plugin-specific cache that does support reload.
 This will require some changes in how panels get created, which we'll show in later steps.
 
-1. Add the file `src/hot-svg.hpp` to your project, containing this:
+1. Add the file [`src/hot-svg.hpp`](../src/hot-svg.hpp) to your project:
 
    ```hpp
    #pragma once
@@ -135,11 +135,13 @@ This will require some changes in how panels get created, which we'll show in la
    {
        // map uses the filename as the lookup key
        std::map<std::string, std::shared_ptr<::rack::window::Svg>> svgs;
-       // load and return a cached SVG shared pointer
+       // load and return a cached SVG
        std::shared_ptr<::rack::window::Svg> load(const std::string &path);
        // reload all svgs in the cache
        void reload();
    };
+
+   extern Cache svg_cache;
 
    }
    ```
@@ -150,11 +152,14 @@ This will require some changes in how panels get created, which we'll show in la
    SOURCES += src/hot-svg.cpp
    ```
 
-3. Add the file `src/hot-svg.cpp` to your project, containing this:
+3. Add the file [`src/hot-svg.cpp`](../src/hot-svg.cpp) to your project:
 
    ```cpp
    #include "hot-svg.hpp"
    namespace hot_svg {
+
+   // The plugin global SVG cache
+   Cache svg_cache;
 
    // nearly identical to Rack's cache
    std::shared_ptr<::rack::window::Svg> Cache::load(const std::string & path)
@@ -197,7 +202,7 @@ At this point you can build the project in dev mode to make sure the makefile wo
 
 ## Add the hot-reload cache to the plugin
 
-In `src/plugin.hpp`, include the `hot-svg.h` header when the `USE_HOT_SVG` feature is enabled (which the makefile turns on for dev builds).
+In `src/plugin.hpp`, include the `hot-svg.hpp` header when the `USE_HOT_SVG` feature is enabled (which the makefile turns on for dev builds).
 
 ```hpp
 #if defined USE_HOT_SVG
@@ -209,8 +214,6 @@ And append this to the end:
 
 ```hpp
 #if defined USE_HOT_SVG
-extern hot_svg::Cache svg_cache;
-
 // is module from this plugin?
 inline bool isPluginModule(Module* module) {
     return module ? pluginInstance == module->model->plugin : false;
@@ -218,20 +221,30 @@ inline bool isPluginModule(Module* module) {
 
 void hotReloadSvgs();
 #endif
+
+inline std::shared_ptr<::rack::window::Svg> LoadSvg(const std::string& filename) {
+#if defined USE_HOT_SVG
+    return hot_svg::svg_cache.load(filename);
+#else
+    return ::rack::window::Svg::load(filename);
+#endif
+}
 ```
 
-This delares the global instance of the cache, and defines a helper that can identify modules that come from this plugin.
+We get three things from this:
 
-In `src/plugin.cpp`, we'll create that cache instance and add a function that does the reloading work that we can call from a module.
+1. the global instance of the cache, defines,
+1. a helper that can identify modules that come from this plugin,
+1. and an SVG loading helper that uses the hot-reload cache when enabled, and the Rack cache otherwise.
+
+In `src/plugin.cpp`, we'll add a function that does the reloading work that we can call from a module.
 
 ```cpp
 #if defined USE_HOT_SVG
-// global svg cache
-hot_svg::Cache svg_cache;
 
 void hotReloadSvgs()
 {
-    svg_cache.reload();
+    hot_svg::svg_cache.reload();
 
     // refresh all the plugin's module widgets
     auto module_widgets = APP->scene->rack->getModules();
@@ -301,7 +314,7 @@ In this example code, you'll need to change the paths to reflect your project's 
 > **NOTE** — Remember to make sure you use the exact filename case as your files on disk!
 If you don't use a consistent capitalization between your code and the files, your plugin works fine on Mac and Windows, but fails to load the SVG on Linux.
 
-In the module widget constructor, we'll load the panel SVGs into the cache as follows:
+In the module widget constructor, we'll load the panel SVGs using our SVG loading helper:
 
 ```cpp
 struct MyModuleWidget : ModuleWidget
@@ -309,22 +322,16 @@ struct MyModuleWidget : ModuleWidget
     MyModuleWidget(MyModule* module)
     {
         setModule(module);
-#if defined USE_HOT_SVG
         auto panel = new ::rack::app::ThemedSvgPanel;
-        // Load SVGs into the plugin's SVG cache
-        auto light = svg_cache.load(asset::plugin(pluginInstance, "res/my-panel-light.svg"));
-        auto dark = svg_cache.load(asset::plugin(pluginInstance, "res/my-panel-dark.svg"));
+        // Load SVGs using our helper
+        auto light = LoadSvg(asset::plugin(pluginInstance, "res/panel-light.svg"));
+        auto dark = LoadSvg(asset::plugin(pluginInstance, "res/panel-dark.svg"));
         panel->setBackground(light, dark);
-#else
-        // standard VCV Rack themed panel
-        auto panel = createPanel(
-            asset::plugin(pluginInstance, "res/my-panel-light.svg"),
-            asset::plugin(pluginInstance, "res/my-panel-dark.svg"));
-#endif
         setPanel(panel);
 ```
 
 Do the same for each module in your plugin.
+You might want to make a common function similar to Rack's `createPanel` template.
 
 And we're done! You should be able to do a dev build and run it and try out the feature.
 
@@ -338,34 +345,44 @@ All instances should update when you press F5 on any one of them.
 
 Because all modules are afffected from any one of them, you don't actually have to implement the hot-swap UI code into all modules (even though that is most convenient).
 
+## Hot reload widget SVGs
+
+If you have custom widgets and load their SVGs using the `LoadSvg` helper above, it just works.
+Your custom widgets update along with the panel.
+
 ## PS: even simpler hot-swap
 
-If all you want is to reload _this_ module's panel,  we can go even more minimal. Ignore everything in this article, and add this function to your module widget (substituting your panel names):
+If all you want is to reload _this_ module's panel,  we can go even more minimal.
+ Ignore everything in this article, and add this function to your module widget (substituting your panel names):
 
 ```cpp
 void MyModuleWidget::reloadPanel() {
     auto panel = dynamic_cast<::rack::app::ThemedSvgPanel*>(getPanel());
     if (panel) {
-        panel->lightSvg->loadFile(asset::plugin(pluginInstance, "res/l-light.svg"));
-        panel->darkSvg->loadFile(asset::plugin(pluginInstance, "res/l-dark.svg"));
+        panel->lightSvg->loadFile(asset::plugin(pluginInstance, "res/panel-light.svg"));
+        panel->darkSvg->loadFile(asset::plugin(pluginInstance, "res/panel-dark.svg"));
         onDirty(::rack::widget::Widget::DirtyEvent{});
     }
 }
 ```
 
-Call it from a hotkey handler and/or menu item. Easy peasy.
+Call it from a hotkey handler and/or menu item similar to the ones presented above.
 
-There are some nits with this approach:
+There are some nits with this minimal approach, but becuase the dynamic loading is only dev builds, these impact only the developer.
 
 - We code the svg path twice: once in the constructor, and once in the explicit reload. If we move the panel graphics or rename them, we have more places in the code to change.
 
-  There are a couple of ways to fix this of course, such as moving the string literals for the names to constants, or adding methods that return the light and dark panel paths (which could be pure virtual methods on a comman base class for your plugin's module widgets).
+  There are a couple of ways to fix this of course, such as moving the string literals for the names to constants,
+  or adding methods that return the light and dark panel paths
+ (which could be pure virtual methods on a comman base class for your plugin's module widgets).
 
 - Only the module under the cursor updates. Other instances of the module in the patch do not refresh.
 
-  But maybe that's not a disadvantage: now you can see before/after side-by-side, for a limited time.
-The next time a panel's framebuffer gets dirtied, it will show the new graphic.
+  But maybe that's not a disadvantage: now you can see before/after side-by-side, but only for a limited time.
+  The next time a panel's framebuffer gets dirtied, it will show the new graphic, which feels a bit random.
 
-| | |
+- Custom widgets don't reload (unless you wire something into your custom widgets).
+
+|||
 |--|--|
 | ![pachde (#d) logo](./assets/Logo.svg) | Copyright © Paul Chase Dempsey |

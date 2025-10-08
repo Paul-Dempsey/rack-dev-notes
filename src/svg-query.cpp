@@ -1,0 +1,66 @@
+#include "svg-query.hpp"
+
+namespace svg_query {
+
+::rack::math::Rect itemBounds(std::shared_ptr<::rack::window::Svg> svg, const char* id)
+{
+    for (NSVGshape* shape = svg->handle->shapes; nullptr != shape; shape = shape->next) {
+        if (shape->id[0] && (0 == strncmp(shape->id, id, 64))) {
+            float * bounds = &shape->bounds[0];
+            return ::rack::math::Rect(bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1]);
+        }
+    }
+    return ::rack::math::Rect();
+}
+
+void hideItem(std::shared_ptr<::rack::window::Svg> svg, const char *id)
+{
+    for (NSVGshape* shape = svg->handle->shapes; nullptr != shape; shape = shape->next) {
+        if (shape->id[0] && (0 == strncmp(shape->id, id, 64))) {
+            shape->opacity = 0.f;
+            return;
+        }
+    }
+}
+
+void hideItems(std::shared_ptr<::rack::window::Svg> svg, const char *prefix)
+{
+    int len = strlen(prefix);
+    for (NSVGshape* shape = svg->handle->shapes; nullptr != shape; shape = shape->next) {
+        if (shape->id[0] && (0 == strncmp(shape->id, prefix, len))) {
+            shape->opacity = 0.f;
+        }
+    }
+}
+}
+
+/*
+MIT License (MIT)
+
+Copyright © 2025 Paul Chase Dempsey
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to permit
+persons to whom the Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+ This software depends on and extends nanosvg.
+
+ nanosvg, Copyright (c) 2013-14 Mikko Mononen memon@inside.org
+
+ See nanosvg.h for license information.
+ */

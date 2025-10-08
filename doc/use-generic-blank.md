@@ -1,6 +1,6 @@
 # Use GenericBlank
 
-Count me as a `helper.py` hater.
+Count me as a `helper.py` "hater".
 The problems with it have been discussed before on the forums, but I don't want to reiterate the details here.
 Suffice to say that I disliked it enough that I created an alternative.
 
@@ -14,7 +14,7 @@ By working I mean:
 
 In the forums, we've seen many beginners get stuck almost immediately just getting the plugin to build and a module to load and display correctly in Rack.
 
-See [Paul-Dempsey/GenericBlank: Template for a VCV Rack Blank module](https://github.com/Paul-Dempsey/GenericBlank#generic-blank).
+See [GenericBlank: a Template for a VCV Rack Blank module](https://github.com/Paul-Dempsey/GenericBlank#generic-blank).
 
 | | |
 |--|--|
