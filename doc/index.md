@@ -18,7 +18,7 @@ It combines stuff I've posted on the [VCV Community](https://community.vcvrack.c
 | [Debugging](./debug.md#debugging) | Setting up Rack debugging in VSCode on Windows. |
 | [Panels](./panels.md#panels) | My Panel process, plus tips for using Inkscape. |
 | [Hot-reload SVGs](./hot-svg.md#hot-reload-svgs) | For fast iteration on panel SVGs, implement hot-reloading. |
-| [Make dialogs](./dialogs.md#dialogs) | Making popup dialogs for your modules. |
+| [Dialogs](./dialogs.md#dialogs) | Making message boxes and popup dialogs suitable for more complex module configuration. |
 | [Jitter periodic updates](./jitter-periodic.md#jitter-periodic-updates) | Mitigate CPU spikes by adding jitter to periodic (control-rate) code. |
 | Documentation on GitHub | (**#d** TODO) Minimal viable docs on GitHub |
 | [Doc images](./doc-images.md#plugin-images-for-documentation) | Preparing module images for documentation. |

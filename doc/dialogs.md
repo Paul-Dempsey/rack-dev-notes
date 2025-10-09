@@ -265,9 +265,42 @@ TDialog* createDialog(ModuleWidget* source, Vec(pos), bool center = false, NVGco
 }
 ```
 
+## Sample dialogs
+
+Here are some sample screen snips of dialogs in Rack:
+
+### Basic Menu dialog
+
+Here a basic menu dialog raised from click on the third button in the top row.
+Dialog is positioned at the mouse cursor, and shows a a screened (dimmed) Rack.
+
+![Menu dialog screen snip](./assets/menu-dialog.png)
+
+### Centered dialog
+
+The more advanced "option 2" dialog implementation, centered on the TEST module with a dimmed Rack.
+
+![Centered dialog screen snip](./assets/center-dialog.png)
+
+### Message box
+
+This combines a centered SVG dialog with custom drawn text, so it can be reused with different titles and messages.
+The message portion supports multi-line messages.
+Here, with a screened Rack.
+
+![Message box screen snip](./assets/message-box.png)
+
+### Flyout dialog
+
+This is a weird wrapping flyout dialog, carefully designed and positioned to "wrap" the module.
+It has a screen over the panel and widgets in the flyout to the right of the module.
+Becuase this appears more tightly attached tot he module, it's displayed without screening Rack.
+
+![Flyout dialog screen snip](./assets/flyout-dialog.png)
+
 ## TBD
 
-I plan to follow up this Dev note with another covering custom widgets suitable for dialogs, and a MessageBox for Rack.
+I plan to follow up this Dev note with another covering custom widgets suitable for dialogs, and include the source for a reusable MessageBox shown here.
 
 | | |
 |--|--|
