@@ -25,19 +25,20 @@ The 3rd-party antivirus programs for Windows are generally bad and you should ju
 The built-in Windows Defender is as good as any other, included in Windows, and all you need.
 I don't recommend turning off antivirus completely, unless you are particularly diligent and confident about what you download and install.
 
-Antivirus, including Defender, can interfere with building so you should exclude all your development folders from scanning, no matter what AV you use.
+Antivirus, including Defender, can interfere with building a project so you should exclude all your development folders from scanning, no matter what AV you use.
 
-Development folders should never be in OneDrive. That is, not in your "Documents" folder.
-Like antivirus, OneDrive can interfere with builds.
+Development folders should never be in OneDrive or similar automated backup system (iCloud, Carbonite).
+In other words, not in your "Documents" folder.
+Like antivirus, these systems can interfere with builds.
 Git with GitHub or similar git hosting is all you need.
 
 ## Setting up your development environment
 
 You must read and follow [VCV Rack: Setting up your development environment](https://vcvrack.com/manual/Building#Setting-up-your-development-environment) _precisely_.
-When it says "restart the shell" after running `pacman -Syu`, you really, _really_ **must** start a new shell for the next step.
+For example, when it says "restart the shell" after running `pacman -Syu`, you really, _really_ **must** start a new shell for the next step.
 Close the window and open a new one before installing the development packages.
 
-Others have run into trouble (Rack crashes) starting from an existing MINGW64 install.
+Some people have run into trouble with Rack crashes when starting from an existing MINGW64 install.
 This is usually solved by updating packages (`pacman -Syu` again), or reinstalling MSYS2.
 
 I use two MINGW64 shells tabbed in Windows Terminal.
@@ -46,7 +47,7 @@ The other shell is for building the plugin.
 You can also use the shortcut for MINGW54 shell installed by MSYS2.
 
 Here is the JSON snippet I use for Windows Terminal settings to use a MING64 bash shell.
-Open Terminal's `settings.json` and add this profile to the `"profiles"` object `"list"` array.
+Open Terminal's `settings.json` and add this profile to the `"profiles"` object `"list"` array. Of course, you'll need to adjust the paths to the appropriate locations on your machine.
 
 ```json
 {
@@ -64,16 +65,38 @@ Once your tools are installed, we can clone and build Rack.
 ## Cloning VCV Rack
 
 Once you've decided where your development projects live, you can clone Rack.
-You can put yours anywhere you have a generous amount of fast disk space available, not under OneDrive, and no spaces in the path.
-All my development projects are in `g:\repos`, so that's what you'll see in all these dev notes.
+You can put yours anywhere you have a generous amount of fast disk space available, not under OneDrive, and _no spaces in the path_.
+All my development projects are in `g:\repos`, so that's what you'll see in the Dev Notes.
 
-To pepare for cloning, set up something similar, open the MINGW64 shell, and cd to the parent folder of where you want Rack.
+To prepare for cloning, set up something similar, open the MINGW64 shell, and `cd` to the parent folder of where you want Rack.
+
 For me that's `g:\repos`, and then follow the Rack guide.
 [VCV Rack: Building Rack](https://vcvrack.com/manual/Building#Building-Rack) instructions are accurate and don't need any other supplementation.
 
+## Line endings and Git
+
+Some of Rack's dependencies are sensitive to the specific line endings in the files.
+The Git settings for a default MSYS2 install are fine.
+
+However, you may be using Git from VSCode or another environment such as a command shell, and using another copy of Git such as Git for Windows.
+Here, we need to be careful.
+A default Git for Windows isntall will set up Git to checkout files with old-style Windows line endings (CRLF).
+If you clone Rack or update a Rack depending witht he wrong settings, you can cause mysterious, difficult-to-diagnose build failures.
+On modern windows, there is no good reason to use CRLF.
+All the editors and tools we care about work with Linux line endings (LF) perfectly well.
+
+Before cloning Rack and its dependencies, make sure your Git is configured to use linux (LF) line endings.
+
+For my projects where it matters (include Rack), I don't rely on global Git settings to be correct.
+Instead, I have a `.gitattributes` file at the root of each repo containing:
+
+```.gitattributes
+* text=auto eol=lf
+```
+
 ## Building Rack
 
-If you successfully completed the Rack docs including the `make run`, you should now be looking at a running VCV Rack Free.
+If you successfully completed following the Rack docs  all the way up to `make run`, you should now be looking at a running "VCV Rack Free".
 If this didn't work for you, get on the forums and ask for help.
 
 ## Running Rack
@@ -96,9 +119,9 @@ At the bare minimum, I recommend cloning _Fundamental_.
 In your MINGW64 shell, `cd` to the `plugins` folder under the Rack and then follow [VCV Rack: Building Plugins](https://vcvrack.com/manual/Building#Building-Rack-plugins) up to the `make` step.
 
 You can do the same for other open-source modules you may be interested in.
-Open modules will have a link in their module right-click menu under _Info_ / _Source code_ which will take you directly to that project's repository.
+Open-source modules should have a link in their module right-click menu under _Info_ / _Source code_ which takes you directly to that project's repository.
 
-Once you have some plugin source, you can build them all in one swoop using:
+Once you have some plugin source, you can build them all in one swoop from the Rack folder using:
 
 ```shell
 make plugins
@@ -106,11 +129,11 @@ make plugins
 
 The Rack instructions show running `make install`, which will make the distribution package and install the plugin into your retail Rack install.
 When you're first getting started, you really don't need to install it to your retail Rack.
-The fastest iteration on a plugin is all done right in the dev build of Rack.
+The fastest iteration on a plugin is all done right in the dev build of Rack + your plugin with a simple `make`.
 
-Of course, when your plugin is close to ready for publishing to the library, use `make install` to make sure it plays well with the retail Rack and other modules in your library.
+Of course, when your plugin is close to ready for publishing to the library, use `make install` to make sure it plays well with the retail Rack and the other modules in your library.
 
-## Set up VSCode workspace for Rack
+## Set up a VSCode workspace for Rack
 
 I use VSCode for editing and debugging. You can get it from [Download VSCode](https://code.visualstudio.com/download). Since we're writing C++, you'll need at least the _Microsoft C/C++_ extension for syntax highlighting, "intellisense", and debugger.
 

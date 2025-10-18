@@ -55,8 +55,8 @@ src/widgets // ui widgets (48 files)
 ```
 
 To keep the size down, each module is usually composed of a _module.hpp_, _module.cpp_, and _module-ui.cpp_.
-If a source file is getting too big (around the 1000-line mark), I sometimes break it down further.
-So, in a few modules you can find _module-ui-create.cpp_ (ui creation separate from other ui logic), _module-file.cpp_ (file i/o) _module-ui-events.cpp_ (when I need a lot of ui event overrides).
+If a source file is getting too big (around the 1000-line mark for me), I sometimes break it down further.
+So, in a few modules you can find _module-ui-create.cpp_ (ui creation separate from other ui logic), _module-file.cpp_ (file i/o), and _module-ui-events.cpp_ (when I need a lot of ui event overrides).
 
 Some of the modules have widgets unique to that module so I sometimes have a `widgets` folder under the module.
 

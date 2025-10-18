@@ -3,17 +3,17 @@
 ![pachde (#d) logo](./assets/Logo-24.svg) by pachde (#d)
 
 This project collects pachde (**#d**) notes about developing plugins for VCV Rack.
-It combines stuff I've posted on the [VCV Community](https://community.vcvrack.com/), the [VCV Rack Discord](https://discord.gg/wxa89Mh), and new information not posted elsewhere.
+It combines information I've posted on the [VCV Community](https://community.vcvrack.com/), the [VCV Rack Discord](https://discord.gg/wxa89Mh), and new ideas not posted elsewhere.
 
 > **License** — All English content and images in this repo are Copyright © Paul Chase Dempsey, All rights reserved.
-> All programming-language source code and configuration in this repo is MIT-licensed.
+> All programming-language source code and configuration, whether an independent file or included on a page, is MIT-licensed. You can freely copy and adapt the code for your own projects, with attribution.
 
 | Note | Description |
 | -- | -- |
 | [Use GenericBlank](./use-generic-blank.md#use-genericblank) | Use the **#d** Generic Blank template repo to start a new plugin. |
-| GenericBlank DSP | (**#d** TODO) After your Blank is up and running, we can add a module that does some Digital Signal Processing (DSP). |
-| [Place Widgets with SVG](./place_widgets.md#place-widgets-with-svg) | (**#d** TODO) Get widget positions from SVG. |
-| [Project structure](./project-structure.md#project-structure) | File layout of Rack plugin |
+| GenericBlank _next_ | (**#d** TODO) After your Blank is up and running, we can add a module with working widgets and some Digital Signal Processing (DSP). |
+| [Place Widgets with SVG](./place_widgets.md#place-widgets-with-svg) | Get widget positions from SVG. |
+| [Project structure](./project-structure.md#project-structure) | organize the files of Rack plugin |
 | [Build Rack](./build-rack.md#build-rack) | A.K.A. No SDK. |
 | [Debugging](./debug.md#debugging) | Setting up Rack debugging in VSCode on Windows. |
 | [Panels](./panels.md#panels) | My Panel process, plus tips for using Inkscape. |
@@ -27,11 +27,11 @@ It combines stuff I've posted on the [VCV Community](https://community.vcvrack.c
 
 Everyone has their own preferences and techniques.
 The best practice is whatever works for you.
-Here, I'm sharing what _I_ do.
+Here, I'm sharing what _I_ have been doing.
 I hope that you might find some of these notes helpful.
 
 I appreciate honest and productive feedback.
-If you notice any problems or inaccuracies in this content, please let me know.
+If you notice any improvements, problems, or inaccuracies in this content, please let me know.
 Feel free to open an issue in this repo or contact me.
 
 ## Source code available
