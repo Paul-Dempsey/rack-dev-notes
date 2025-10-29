@@ -6,12 +6,12 @@
  Convention is for all source to be in src.
 
 Rack itself has a separate `include` folder at the same level as `src`, with any organizing folder structure under `src` mirrored under `include`.
-This makes a lot of sense for something that is consumed by others as an SDK (without source), but it’s not necessary for plugins.
+This makes a lot of sense for something that is consumed by others as an SDK (possibly without source), but it’s not necessary for plugins.
 I use a different structure.
 
 The standard makefile expects all resources that will be installed to be in `res`.
 This is the `DISTRIBUTABLES += res` line in the makefile.
-You will always need resources if you're using SVGs for panels, and any fonts you want to use other than the ones provided by Rack.
+You will always need resources if you're using SVGs for panels and any fonts you want to use other than the ones provided by Rack.
 If you have "factory" presets and selections, you can see the parallel folder convention for these types of content that can be installed with your plugin.
 This is where Rack infrastructure expects them to be, so you must follow the convention.
 

@@ -15,8 +15,8 @@ We create a panel SVG and use runtime code to get the information we need.
 The basic design here is:
 
 1. Add a placeholder for a widget.
-1. Set a unique id for the placeholder.
-1. At panel creation time, use a helper to read out coordinates for positioning the widget.
+1. Set a unique id for the placeholder using the **id** attribute for the element.
+1. At `ModuleWidget` creation time, use a helper to read out coordinates for positioning the widget.
 1. Once widgets have been created, hide placeholders as needed.
 
 ## Designing a panel
@@ -82,7 +82,9 @@ So, for `createWidgetCentered`, pass the position from `itemBounds(...).getCente
 
 If the id isn't found, the rectangle is a (Infinity,Infinity,0,0) rectangle.
 
-> **#d TODO** Add to the index. Add examples, hot-swap svg integration, and the enhanced svg_query from WIP pachde1
+(**#d todo** does this result in an assertion in Rack, a diagnostic log, or just an invisible widget?)
+
+> **#d TODO** Add examples, hot-swap svg integration, and the enhanced svg_query from WIP pachde1
 
 | | |
 |--|--|
