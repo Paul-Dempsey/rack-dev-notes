@@ -26,6 +26,8 @@ The built-in Windows Defender is as good as any other, included in Windows, and 
 I don't recommend turning off antivirus completely, unless you are particularly diligent and confident about what you download and install.
 
 Antivirus, including Defender, can interfere with building a project so you should exclude all your development folders from scanning, no matter what AV you use.
+Exclude your dev tools as well, such as the folder where MSYS2 is installed.
+I saw a significant improvement after excluding the `C:\msys64` folder.
 
 Development folders should never be in OneDrive or similar automated backup system (iCloud, Carbonite).
 In other words, not in your "Documents" folder.
