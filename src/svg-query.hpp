@@ -3,23 +3,71 @@
 
 namespace svg_query {
 
-// itemBounds returns the bounds of the element with the given id.
-// If id isn't found, returns Rect(0,0,0,0).
+using SharedSvg = std::shared_ptr<::rack::window::Svg>;
+
+// elementBounds returns the bounds of the element with the given id.
+// If id isn't found, returns Rect(Infinity,Infinity,0,0).
 // Bounds are 4 floats [left, top, right, bottom]
-::rack::math::Rect itemBounds(std::shared_ptr<::rack::window::Svg> svg, const char* id);
+::rack::math::Rect elementBounds(SharedSvg svg, const char* id);
+
+using BoundsIndex = std::map<std::string, ::rack::math::Rect>;
+// makeBounds creates an index (map[id:rect]) of all elements whose id has the specified prefix.
+BoundsIndex makeBounds(SharedSvg svg, const char * prefix, bool hide);
+
+// Add bounds to an existing map.
+// For creating common bounds index from multiple svgs.
+// Take care that all key names are unique across svgs.
+void addBounds(SharedSvg svg, const char * prefix, BoundsIndex& map, bool hide);
+
+// shapeIndex creates an index (map[id:shape]) of all elements whose id has the specified prefix.
+using ShapeIndex = std::map<std::string, NSVGshape*>;
+void shapeIndex(SharedSvg svg, const char * prefix, ShapeIndex& map);
 
 // Hide an item in the SVG by id.
-void hideItem(std::shared_ptr<::rack::window::Svg> svg, const char* id);
+void hideElement(SharedSvg svg, const char* id);
+void showElement(SharedSvg svg, const char* id);
 
 // Hide all placeholders in the svg whose id has the specified prefix.
-void hideItems(std::shared_ptr<::rack::window::Svg> svg, const char * prefix);
+void hideElements(SharedSvg svg, const char * prefix);
+void showElements(SharedSvg svg, const char * prefix);
 
 // Get a panel Svg(s)
-inline std::shared_ptr<::rack::window::Svg> panelSvg(::rack::app::SvgPanel* panel) { return panel->svg; }
+inline SharedSvg panelSvg(::rack::app::SvgPanel* panel) { return panel->svg; }
 // The Light Svg panel is used by default
-inline std::shared_ptr<::rack::window::Svg> panelSvg(::rack::app::ThemedSvgPanel* panel) { return panel->lightSvg; }
+inline SharedSvg panelSvg(::rack::app::ThemedSvgPanel* panel) { return panel->lightSvg; }
 // Can also use the Dark Svg of a themed panel
-inline std::shared_ptr<::rack::window::Svg> panelDarkSvg(::rack::app::ThemedSvgPanel* panel) { return panel->darkSvg; }
+inline SharedSvg panelDarkSvg(::rack::app::ThemedSvgPanel* panel) { return panel->darkSvg; }
+
+// works with the result of getPanel() when using either SvgPanel or ThemedSvgPanel
+SharedSvg panelWidgetSvg(::rack::widget::Widget* panel);
+
+// positioning / repositioning
+//
+// Add a PositionIndex member to the moduleWidget, and build it as widgets are created.
+// Then when reloading the svg, build a new bound idnex and call positionWidgets to
+// reposition/size widgets to the new location/size of the placeholder in the svg.
+//
+
+enum class HotPosKind {
+    Center,        // Widget is centered on the bounds center
+    Box,           // Widget position and size set to bounds
+    BoundsCenter,  // Widget position (top left) set to bounds center
+
+    // Widget is placed at the corresponding octant (clockwise from top left)
+    TopLeft, TopMiddle, TopRight, MiddleRight,
+    BottomRight, BottomMiddle, BottomLeft, MiddleLeft
+};
+
+struct HotPos { HotPosKind kind; ::rack::widget::Widget* widget; };
+
+// indexed by svg id
+using PositionIndex = std::map<const char *, HotPos>;
+
+inline void addPosition(PositionIndex& positions, const char * key, HotPosKind kind, ::rack::widget::Widget* widget) {
+    positions[key] = HotPos{kind, widget};
+}
+
+void positionWidgets(const PositionIndex& positions, const BoundsIndex& bounds);
 
 }
 
