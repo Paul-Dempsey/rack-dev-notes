@@ -1,23 +1,23 @@
 #pragma once
 #include <rack.hpp>
-using namespace ::rack;
+//using namespace ::rack;
 
 namespace widgetry {
 
-struct DialogBase: OpaqueWidget
+struct DialogBase : ::rack::widget::OpaqueWidget
 {
-    using Base = OpaqueWidget;
+    using Base = ::rack::widget::OpaqueWidget;
 
-    ModuleWidget * source{nullptr};
+    ::rack::app::ModuleWidget * source{nullptr};
 
-    DialogBase(ModuleWidget * src) : source(src) {}
+    DialogBase(::rack::app::ModuleWidget * src) : source(src) {}
 
     void onAction(const ActionEvent& e) override {
         e.unconsume(); // don't close menu overlay
     }
 
     void close() {
-        MenuOverlay* overlay = getAncestorOfType<MenuOverlay>();
+        auto overlay = getAncestorOfType<::rack::ui::MenuOverlay>();
         if (overlay) {
             overlay->requestDelete();
         }
@@ -25,38 +25,38 @@ struct DialogBase: OpaqueWidget
 };
 
 template<typename TSvg>
-struct SvgDialog: DialogBase
+struct SvgDialog : DialogBase
 {
-    ::rack::widget::FramebufferWidget* fb;
-    ::rack::widget::SvgWidget* sw;
+    ::rack::widget::FramebufferWidget* fb{nullptr};
+    ::rack::widget::SvgWidget* sw{nullptr};
 
-    SvgDialog(ModuleWidget* src) : DialogBase(src) {
-        fb = new widget::FramebufferWidget;
+    SvgDialog(::rack::app::ModuleWidget* src) : DialogBase(src) {
+        fb = new ::rack::widget::FramebufferWidget;
         addChild(fb);
-        sw = new widget::SvgWidget;
+        sw = new ::rack::widget::SvgWidget;
         fb->addChild(sw);
 
         set_svg(::rack::window::Svg::load(TSvg::background()));
     }
 
-    void set_svg(std::shared_ptr<window::Svg> svg) {
+    void set_svg(std::shared_ptr<::rack::window::Svg> svg) {
         if (!sw->svg) {
             sw->setSvg(svg);
-            box.size = sw->box.size;
-            fb->box.size = sw->box.size;
+            fb->box.size = box.size = sw->box.size;
             fb->setDirty();
         }
     }
 };
 
-struct TrackingZoom: ::rack::widget::ZoomWidget
+struct TrackingZoom : ::rack::widget::ZoomWidget
 {
     using Base = ::rack::widget::ZoomWidget;
 
-    Widget * pseudo_parent{nullptr};
-    Vec pseudo_pos;
+    ::rack::Widget * pseudo_parent{nullptr};
+    ::rack::math::Vec pseudo_pos;
 
-    TrackingZoom(Widget *pseudo, Vec pos) : pseudo_parent(pseudo), pseudo_pos(pos) {}
+    TrackingZoom(::rack::widget::Widget *pseudo_parent, ::rack::math::Vec pos)
+        : pseudo_parent(pseudo_parent), pseudo_pos(pos) {}
 
     void step() override {
         Base::step();
@@ -65,31 +65,35 @@ struct TrackingZoom: ::rack::widget::ZoomWidget
             setZoom(current_zoom);
         }
         auto abs_pos = pseudo_parent->getAbsoluteOffset(pseudo_pos);
-        if (APP->scene->menuBar && APP->scene->menuBar->isVisible()) {
-            abs_pos.y -= APP->scene->menuBar->box.size.y;
+        auto scene = APP->scene;
+        if (scene->menuBar && scene->menuBar->isVisible()) {
+            abs_pos.y -= scene->menuBar->box.size.y;
         }
-        box.pos = APP->scene->getRelativeOffset(abs_pos, APP->scene->rackScroll);
+        box.pos = scene->getRelativeOffset(abs_pos, scene->rackScroll);
     }
 };
 
 template <typename TDialog>
-TDialog* createMinimalMenuDialog()
-{
+TDialog* createMinimalMenuDialog() {
     TDialog* dialog = new TDialog();
     ::rack::createMenu()->addChild(dialog);
     return dialog;
 }
 
 template <typename TDialog>
-TDialog* createDialog(ModuleWidget* source, Vec(pos), bool center = false, NVGcolor screen = NVGcolor{0})
-{
+TDialog* createDialog(
+    ::rack::app::ModuleWidget* source,
+    ::rack::math::Vec pos,
+    bool center = false,
+    NVGcolor screen = NVGcolor{0}
+) {
     TDialog* dialog = new TDialog(source);
     if (center) {
         pos = pos.minus(dialog->box.size.div(2));
     }
 
-    ui::MenuOverlay* menuOverlay = new ui::MenuOverlay;
-    menuOverlay->bgColor = screen; // dim rack
+    auto menuOverlay = new ::rack::ui::MenuOverlay;
+    menuOverlay->bgColor = screen; // optionally dim/screen rack
 
     auto zoomer = new TrackingZoom(source, pos);
     menuOverlay->addChild(zoomer);
@@ -100,11 +104,15 @@ TDialog* createDialog(ModuleWidget* source, Vec(pos), bool center = false, NVGco
 }
 
 template <typename TDialog>
-TDialog* createMenuDialog(ModuleWidget* source, Vec(pos), bool center = false, NVGcolor screen = NVGcolor{0})
-{
+TDialog* createMenuDialog(
+    ::rack::app::ModuleWidget* source,
+    ::rack::math::Vec(pos),
+    bool center = false,
+    NVGcolor screen = NVGcolor{0}
+) {
     TDialog* dialog = new TDialog(source);
 
-    ::rack::Menu* menu = createMenu();
+    auto menu = ::rack::createMenu();
     auto overlay = menu->getAncestorOfType<MenuOverlay>();
     overlay->bgColor = screen;
 
@@ -123,25 +131,26 @@ TDialog* createMenuDialog(ModuleWidget* source, Vec(pos), bool center = false, N
 }
 
 /*
-MIT License (MIT)
+MIT License
 
-Copyright © 2025 Paul Chase Dempsey
+Copyright (c) 2025 Paul Chase Dempsey
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to permit
-persons to whom the Software is furnished to do so, subject to the following
-conditions:
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 */
