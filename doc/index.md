@@ -17,7 +17,7 @@ It combines information I've posted on the [VCV Community](https://community.vcv
 | [Hot-reload SVGs](./hot-svg.md#hot-reload-svgs) | For fast iteration on panel SVGs, implement hot-reloading. |
 | [Dialogs](./dialogs.md#dialogs) | Making message boxes and popup dialogs suitable for more complex module configuration. |
 | [Jitter periodic updates](./jitter-periodic.md#jitter-periodic-updates) | Mitigate CPU spikes by adding jitter to periodic (control-rate) code. |
-| Documentation on GitHub | (**#d** TODO) Minimal viable docs on GitHub |
+| Documentation on GitHub | (**#d** TODO) Minimal viable docs on GitHub. Meanwhile, you can just look at this repo ;-) |
 | [Doc images](./doc-images.md#plugin-images-for-documentation) | Preparing module images for documentation. |
 | Releasing to the Rack Library | (**#d** TODO) Checklist for releasing to the VCV library |
 

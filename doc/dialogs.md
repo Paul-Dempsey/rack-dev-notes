@@ -302,6 +302,19 @@ Because this appears more tightly attached to the module, it's displayed without
 
 ![Flyout dialog screen snip](./assets/flyout-dialog.png)
 
+## Real-life examples
+
+[**pachde One**](https://library.vcvrack.com/plugins?query=pachde-One) has two dialogs: One for FancyBox image options, and one for Info text options.
+The pachde One dialogs use the same dialog creatin listed here and also use:
+
+- SVG-based widget positioning (see [Position Widgets with SVG](./place-widgets.md#place-widgets-with-svg))
+- Custom widgets for switches, color pickers, the hamburger menu, text buttons, labels, and previews.
+- SVG and custom widget theming using a style sheet, instead of Rack's multiple SVG versions.
+
+| FancyBox image options | Info text options |
+| :-: | :-: |
+| ![FancyBox image options dialog](./assets/FancyBox-image-dialog.png) | ![Info text options dialog](./assets/Info-text-options.png) |
+
 ## TBD
 
 Some day follow up this Dev note with another covering custom widgets suitable for dialogs,
