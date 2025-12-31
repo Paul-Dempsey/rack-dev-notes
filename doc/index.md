@@ -9,7 +9,7 @@ It combines information I've posted on the [VCV Community](https://community.vcv
 | -- | -- |
 | [Use GenericBlank](./use-generic-blank.md#use-genericblank) | Use the **#d** Generic Blank template repo to start a new plugin. |
 | GenericBlank _next_ | (**#d** TODO) After your Blank is up and running, we can add a module with working widgets and some Digital Signal Processing (DSP). |
-| [Position Widgets with SVG](./place-widgets.md#place-widgets-with-svg) | Get widget positions at rutnime from the panel SVG. |
+| [Position Widgets with SVG](./place-widgets.md#place-widgets-with-svg) | Get widget positions at run-time from the panel SVG. |
 | [Project structure](./project-structure.md#project-structure) | Organize the files of Rack plugin. |
 | [Build Rack](./build-rack.md#build-rack) | A.K.A. No SDK. |
 | [Debugging](./debug.md#debugging) | Setting up Rack debugging in VSCode on Windows. |
@@ -20,7 +20,6 @@ It combines information I've posted on the [VCV Community](https://community.vcv
 | Documentation on GitHub | (**#d** TODO) Minimal viable docs on GitHub |
 | [Doc images](./doc-images.md#plugin-images-for-documentation) | Preparing module images for documentation. |
 | Releasing to the Rack Library | (**#d** TODO) Checklist for releasing to the VCV library |
-| Localization | (**#d** MAYBE) |
 
 Everyone has their own preferences and techniques.
 The best practice is whatever works for you.

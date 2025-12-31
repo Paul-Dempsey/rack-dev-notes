@@ -11,7 +11,8 @@ It can be any size or shape and sits on top of all the modules.
 It can be based on an SvgWidget for a background panel or custom-drawn.
 You add child widgets for the UI details, just like a module widget.
 
-This part is simple and familiar. The tricky part is getting good user experience when it's invoked.
+This part is simple and familiar.
+The tricky part is getting good user experience when it's invoked.
 We'll get to that in a moment, but just a couple of details for a dialog widget.
 
 ## Dialog widget requirements
@@ -29,7 +30,7 @@ Your dialog widget will need a couple of things at minimum:
 2. A means of closing the dialog (optional).
 
    The dialog, like a menu will always close when clicking outside of the dialog.
-   It's still nice to have a widget right on the dialog, so that it's recognizable as a dialog.
+   It's still nice to have a widget on the dialog, so that it's recognizable as a dialog, and something visible to click.
 
    This method can be called from a "close" or "ok" button on the dialog.
 
@@ -51,7 +52,7 @@ In some method of your module widget, create a menu and add a child.
 
 The simplest way to get the popup behavior is make the dialog a child of a regular Rack menu.
 A standard menu is rooted in a `::Rack::ui::MenuOverlay`, which works as follows.
-The menu overlay makes itself at (0.0) and the size of it's parent in it's `step()` so perfectly overlays it's parent.
+The menu overlay makes itself at (0, 0) and the size of it's parent in it's `step()` so it perfectly overlays it's parent.
 It handles clicks by requesting deletion, which removes the overaly and its children.
 This event isn't propagated, so whatever you clicked on (a module, knob, or whatever) doesn't receive that click.
 
@@ -78,35 +79,37 @@ Doing it this way we get:
 
   If you're opening the dialog from a small button, this is not very noticeable.
   On a bigger button it's more noticeable.
-  If you're opening the dialog on a keystroke, this feels random.
-  And if from a menu item, just ... weird: floating somewhere off the module.
+  If you're opening the dialog on a keystroke, this feels random for it to appear at the mouse pointer.
+  And if from a menu item, just ... _weird_, floating somewhere off the module.
 
 - Same general behavior as a menu, except that (as expected) clicking on the dialog doesn't close it because we overrode `onAction`.
 
 - Clicking outside the dialog closes it.
   This is different from a typical modal dialog in other applications, but I don't mind in the context of Rack.
+  A truly modal dialog _can_ be created, but I don't cover that here.
+  I haven't found a use case that really requires modality, and modes generally makes a user interface harder to use.
 
 - Like module menus, the dialog is at Rack's **Ui Scale** setting.
   Personally, I find it disconcerting for a dialog if your Rack is not zoomed close to 100%.
-  It looks out of place — either too small or too large.
+  It looks out of place — either too small or too large comapred to your module.
 
 - You cannot scroll or zoom while the dialog is up.
 
 We can fix the positioning easily, but not the scaling or scrolling.
 The sample implementation in this repo adds support for additional features:
-optional dialog positioning and centering, and optional Rack screening (exposing a feature in Racks `MenuOverlay`).
+optional dialog positioning and centering, and optional Rack screening (exposing a feature that alread exists in Racks `MenuOverlay`).
 
 ### Option 2: Enhanced dialog
 
 With this option we fix some of the limitations of Option 1.
 
 The UI-scale and the lack of scrolling and zooming is because `createMenu` adds the menu as a child of `APP->scene`.
-The Scene itself doesn't scroll and zooms to the Rack _UI scale_ setting.
+The scene itself doesn't scroll and zooms to the Rack _UI scale_ setting.
 So, we'll parent the overlay to something that _does_ scroll: `APP->scene->rackScroll`.
 
 This still doesn't take care of the zooming, which also affects the position.
 I tried a number of ways to get the correct parent to achieve this, but I didn't find a way to make that work: the correct widget isn't readily accessible.
-So, I introduce a widget that does know how to zoom, and tracks the zoom factor and the intended position relative to the module:
+So, I introduce a widget that does know how to zoom, tracks the zoom factor, and tracks the intended position relative to the module.
 
 ```cpp
 // dialog.hpp
@@ -136,7 +139,8 @@ struct TrackingZoom: ::rack::widget::ZoomWidget
 };
 ```
 
-The tracking happens in `step`, which introduces a delay proportional to UI frame rate that results in slight jumpiness and flickering as you scroll and zoom. I guess we can't have everything.
+The tracking happens in `step`, which introduces a delay proportional to UI frame rate that results in slight jumpiness and flickering as you scroll and zoom.
+I guess we can't have everything.
 
 To use the tracking widget we need a revised creation template, which I'll show in the next section.
 
@@ -294,13 +298,14 @@ Here, with a screened Rack.
 
 This is a weird wrapping flyout dialog, carefully designed and positioned to "wrap" the module.
 It has a screen over the panel and widgets in the flyout to the right of the module.
-Becuase this appears more tightly attached tot he module, it's displayed without screening Rack.
+Because this appears more tightly attached to the module, it's displayed without a screen.
 
 ![Flyout dialog screen snip](./assets/flyout-dialog.png)
 
 ## TBD
 
-I plan to follow up this Dev note with another covering custom widgets suitable for dialogs, and include the source for a reusable MessageBox shown here.
+Some day follow up this Dev note with another covering custom widgets suitable for dialogs,
+and include the source for a reusable MessageBox shown here.
 
 | | |
 |--|--|

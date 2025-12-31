@@ -13,13 +13,13 @@ We borrow a technique from games programming: **hot-reload**.
 This means being able to reload the graphics from disk without restarting the program.
 
 Now, games often have a highly engineered system with a file-system watcher to automatically detect changes and reload assets as soon as the file changes.
-That would be cool, but that's a lot of complexity to engineer, especially in a cross-platform way, and too much to cover in a simple dev note.
+That would be cool, but that's a lot of complexity to engineer, especially in a cross-platform way (and too much to cover in a simple dev note).
 
 So, we'll implement a pragmatic minimalist solution where we invoke the reloading manually.
 
 What follows is a step-by step guide, including all the code required to have SVG hot-reloading in your plugin.
 This note is written for a newcomer, so I don't assume you know about writing makefiles and the like.
-Bear with me if the explanations covers things that "every developer should know already" :-).
+Bear with me if the explanations covers things that "every developer should know already".
 
 **See also** Idlework's [Death to helper.py, Long live SvgHelper](https://community.vcvrack.com/t/death-to-helper-py-long-live-svghelper/19427) on the Rack Community forum for another approach and code you can use.
 This one is more extensive and comes with more bells and whistles than that what I describe here.
@@ -34,11 +34,11 @@ This one is more extensive and comes with more bells and whistles than that what
 
 ## Hot-reload feature
 
-Let's run down the tl;dr on the hot-reload feature:
+Let's run down the tl;dr on hot-reload:
 
 - Light and Dark panels following the VCV Rack mechanism.
 - Hot-reload doesn't make sense for end users of your plugin, so we only add it for developer builds.
-- Hot-reload is initiated manually by:
+- Hot-reload is initiated manually by either:
   - Press F5 when the mouse is over the module.
   - Right-click menu item.
 - Hot-reload affects all modules of the plugin at once.
@@ -60,29 +60,34 @@ In the plugin `makefile`, add the following block after the `RACK_DIR ?= ../..` 
 ```makefile
 ifdef DEV_BUILD
 
-# turn off optimizations
+# Turn off optimization
 FLAGS += -O0
-# include hot-swap SVG support
+
+# Include hot-swap SVG support
 FLAGS += -DUSE_HOT_SVG
+# to be enabled in later steps
 #SOURCES += src/hot-svg.cpp
+
+# Support other dev-only code under '#ifdef DEV_BUILD'
+FLAGS += -DDEV_BUILD
 
 else
 
-# turn on max optimization
+# Max optimization
 FLAGS += -O3
-# define NDEBUG (weird negative, but commonly used for excluding asserts)
+# Define NDEBUG (weird negative, but commonly used for excluding asserts)
 FLAGS += -DNDEBUG
 
 endif
 ```
 
-In our plugin code, well be able to use "if-defs" with the `USE_HOT_SVG` symbol to separate the hot-svg code from regular code in the project.
+In our plugin code, well be able to use "if-defs" with the `USE_HOT_SVG` symbol to include the hot-svg code separately from other code in the project.
 See how it's defined in the makefile above.
 You'll see that used in later steps.
 
 Since we don't have the hot-reload code yet, the inclusion of it's source is commented out.
 You can try making a devloper build with just this change.
-Since we've only touched the project makefile, we must first clean the project to ensure it gets rebuilt:
+Since we've only touched the project makefile, we must first clean the project to ensure things gets rebuilt:
 
 ```shell
 make clean
@@ -94,17 +99,17 @@ Then launch a developer build:
 make DEV_BUILD=1
 ```
 
-This command defines `DEV_BUILD`, so you get **if** part of the block, and not the **else** part.
+This command defines `DEV_BUILD` for `make`, so you get **if** part of the block, and not the **else** part.
 To make a regular release build without the dev features as it would be for a Rack library build, run:
 
 ```shell
 make clean
 make
-#or 'make install'
+#or 'make install' if using the Rack SDK
 ```
 
 In other words, do the regular normal thing. That's what the Rack Library builds will do.
-And because we haven't updated the GitHub action to pass `DEV_BUILD=1`, the GitHub builds are also not dev builds.
+And because we haven't updated the GitHub action to pass `DEV_BUILD=1`, the GitHub builds and rack library builds are also _not_ dev builds.
 
 So what did we get from this change, given there's nothing about the main topic of this dev note here yet? We got:
 
@@ -114,13 +119,13 @@ So what did we get from this change, given there's nothing about the main topic 
 
 - In non-dev (release) builds, we've turned off asserts by defining `NDEBUG`.
 
-  This is different from normal Rack builds where asserts are enabled (and sometimes surprises people).
+  This is different from normal Rack builds where asserts are enabled (and sometimes surprises and annoys people).
 
 ## Add hot-reload support code
 
-Now we'll add the support code to the project.
+Now we'll add the hot-reload support to the project.
 The support code consists of a header and cpp file for an SVG cache.
-We will bypass the normal Rack SVG cache which doesn't support reload, and instead use a plugin-specific cache that does support reload.
+We will bypass the normal Rack SVG cache which doesn't support reload, and instead use a plugin-specific cache that does support it.
 This will require some changes in how panels get created, which we'll show in later steps.
 
 1. Add the file [`src/hot-svg.hpp`](../src/hot-svg.hpp) to your project:
@@ -233,7 +238,7 @@ inline std::shared_ptr<::rack::window::Svg> LoadSvg(const std::string& filename)
 
 We get three things from this:
 
-1. the global instance of the cache, defines,
+1. the global instance of the cache,
 1. a helper that can identify modules that come from this plugin,
 1. and an SVG loading helper that uses the hot-reload cache when enabled, and the Rack cache otherwise.
 
@@ -257,14 +262,14 @@ void hotReloadSvgs()
 #endif
 ```
 
-## Add hot-reload access to the module user interface
+## Add hot-reload to the module user interface
 
 Our design calls for a key press and a menu item to invoke SVG reloading.
 So, we go to our module widget and add or modify `onHoverKey` for the key press, and add/modify `appendContextMenu`.
 
-Here's the code, assuming you don't already have overrides for these fuunctions.
+Here's the code, assuming you don't already have overrides for these functions.
 If you're following from a stock GenericBlank, you won't have these yet.
-If you do, the you'll need to merge the logic.
+If you do, the you'll need to merge the logic here with your existing code.
 
 ```cpp
     void onHoverKey(const HoverKeyEvent& e) override
@@ -353,7 +358,7 @@ Your custom widgets update along with the panel.
 ## PS: even simpler hot-swap
 
 If all you want is to reload _this_ module's panel,  we can go even more minimal.
- Ignore everything in this article, and add this function to your module widget (substituting your panel names):
+Ignore everything in this article, and add the following function to your module widget (substituting your panel names):
 
 ```cpp
 void MyModuleWidget::reloadPanel() {
@@ -378,8 +383,8 @@ There are some nits with this minimal approach, but becuase the dynamic loading 
 
 - Only the module under the cursor updates. Other instances of the module in the patch do not refresh.
 
-  But maybe that's not a disadvantage: now you can see before/after side-by-side, but only for a limited time.
-  The next time a panel's framebuffer gets dirtied, it will show the new graphic, which feels a bit random.
+  But maybe that's not a disadvantage: now you can see before/after side-by-side but only for a limited time.
+  The next time a panel's framebuffer gets dirtied it will show the new graphic which feels a bit random.
 
 - Custom widgets don't reload (unless you wire something into your custom widgets).
 

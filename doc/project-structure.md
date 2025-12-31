@@ -1,19 +1,28 @@
 # Project Structure
 
-(originally in [this Community thread](https://community.vcvrack.com/t/getting-started-with-plugin-development/24323/8))
+(edited from a post originally in [this Community thread](https://community.vcvrack.com/t/getting-started-with-plugin-development/24323/8))
 
- You can organize the source for your project as you wish.
- Convention is for all source to be in src.
+You can organize the source for your project as you wish.
+Convention is for all source to be in a `src` folder at the root of the project.
 
 Rack itself has a separate `include` folder at the same level as `src`, with any organizing folder structure under `src` mirrored under `include`.
 This makes a lot of sense for something that is consumed by others as an SDK (possibly without source), but it’s not necessary for plugins.
-I use a different structure.
+
+I use a different structure, with all source code including headers under `src`.
+In the project `Makefile` I add:
+
+```makefile
+# Search 'src' for include files.
+FLAGS += -Isrc
+```
+
+If you use an `include` like Rack does, add `FLAGS += -Iinclude`.
 
 The standard makefile expects all resources that will be installed to be in `res`.
 This is the `DISTRIBUTABLES += res` line in the makefile.
 You will always need resources if you're using SVGs for panels and any fonts you want to use other than the ones provided by Rack.
 If you have "factory" presets and selections, you can see the parallel folder convention for these types of content that can be installed with your plugin.
-This is where Rack infrastructure expects them to be, so you must follow the convention.
+This is where Rack infrastructure expects them to be, so you must follow this convention.
 
 I like to keep documentation in the same repo with the source.
 Some developers keep a separate repo for documentation.
@@ -25,8 +34,8 @@ I keep working stuff separated from installed stuff, so I have folders for this.
 
 ---
 
-My current plugin is quite complex, with extensive custom UI widgets, and modules that communicate among each other, so the structure is correspondingly more complex than a simpler plugin.
-My other projects have been much flatter.
+One of my plugins is quite complex, with extensive custom UI widgets and modules that communicate among each other, so the structure is correspondingly more complex than a simpler plugin.
+Other projects of mine have been much flatter, but I tend to move to this as I add modules or complexity.
 
 Some stuff is here that I wouldn't normally keep in source control,
 but since I'm now switching between Windows, Mac, and Linux, and sometimes need to work away from home,
@@ -54,8 +63,23 @@ src/services // common services used everywhere (mostly header-only) (33 files)
 src/widgets // ui widgets (48 files)
 ```
 
+By adding `src` to the includes search path in the makefile as above, when I include the header for a service or widget, it's the rellative path from `src`.
+
+Example from CHEM's `src/modules/Preset/PresetUi.cpp`. No `../../` in sight!
+
+```cpp
+#include "Preset.hpp"
+#include "em/preset-meta.hpp"
+#include "services/colors.hpp"
+#include "widgets/click-region-widget.hpp"
+#include "widgets/hamburger.hpp"
+#include "widgets/logo-widget.hpp"
+#include "widgets/spinner.hpp"
+#include "widgets/uniform-style.hpp"
+```
+
 To keep the size down, each module is usually composed of a _module.hpp_, _module.cpp_, and _module-ui.cpp_.
-If a source file is getting too big (around the 1000-line mark for me), I sometimes break it down further.
+If a source file is getting big (around the 1000-line mark for me), I sometimes break it down further.
 So, in a few modules you can find _module-ui-create.cpp_ (ui creation separate from other ui logic), _module-file.cpp_ (file i/o), and _module-ui-events.cpp_ (when I need a lot of ui event overrides).
 
 Some of the modules have widgets unique to that module so I sometimes have a `widgets` folder under the module.
